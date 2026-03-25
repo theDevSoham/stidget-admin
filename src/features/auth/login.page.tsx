@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import axios from "axios";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -31,8 +32,12 @@ export default function LoginPage() {
       toast.success("Login successful");
 
       navigate("/");
-    } catch (error: any) {
-      toast.error(error?.response?.data?.message || "Login failed");
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message || "Login failed");
+      } else {
+        toast.error("Login failed");
+      }
     } finally {
       setLoading(false);
     }
@@ -74,7 +79,11 @@ export default function LoginPage() {
               />
             </div>
 
-            <Button className="w-full h-11 font-medium cursor-pointer" disabled={loading} variant="default">
+            <Button
+              className="w-full h-11 font-medium cursor-pointer"
+              disabled={loading}
+              variant="default"
+            >
               {loading ? "Logging in..." : "Login"}
             </Button>
           </form>

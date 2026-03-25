@@ -6,7 +6,16 @@ import { Skeleton } from "@/components/ui/skeleton";
 import dayjs from "@/lib/dayjs";
 
 export default function DashboardPage() {
-  const [health, setHealth] = useState<any>(null);
+  const [health, setHealth] = useState<{
+    status: "ok" | "degraded";
+    timestamp: string;
+    uptime: number;
+    environment: "development" | "production";
+    services: {
+      database: "up" | "down";
+      cloudinary: "up" | "down";
+    };
+  } | null>(null);
   const [loading, setLoading] = useState(true);
 
   const fetchHealth = async () => {
@@ -31,7 +40,7 @@ export default function DashboardPage() {
 
       {loading ? (
         <Skeleton className="h-32 w-full" />
-      ) : (
+      ) : health ? (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           <StatusCard
             title="API Status"
@@ -61,6 +70,13 @@ export default function DashboardPage() {
           <StatusCard
             title="Last Checked"
             value={dayjs(health.timestamp).fromNow()}
+          />
+        </div>
+      ) : (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <StatusCard
+            title="No health data available"
+            value="Defaulted to null"
           />
         </div>
       )}
