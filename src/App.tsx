@@ -5,6 +5,7 @@ import React from "react";
 import { ProtectedRoute } from "./components/protected-route";
 import DashboardPage from "./features/dashboard/dashboard.page";
 import { AdminLayout } from "./layout/admin-layout";
+import StickersPage from "./features/stickers/stickers.page";
 
 const App = () => {
   return (
@@ -21,6 +22,7 @@ const App = () => {
             }
           >
             <Route path="/" element={<DashboardPage />} />
+            <Route path="/stickers" element={<StickersPage />} />
           </Route>
 
           <Route path="*" element={<Navigate to="/" />} />

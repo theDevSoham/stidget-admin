@@ -15,11 +15,11 @@ export function AdminLayout() {
     <div className="min-h-screen flex bg-muted/30">
       {/* Sidebar */}
       <aside className="w-64 border-r bg-background p-4 flex flex-col">
-        <div className="text-xl font-semibold mb-6">Sticker CMS</div>
+        <div className="text-xl font-semibold mb-6">Stidget CMS</div>
 
         <nav className="flex flex-col gap-2 flex-1">
-          <SidebarItem icon={<LayoutDashboard size={18} />} label="Dashboard" />
-          <SidebarItem icon={<Sticker size={18} />} label="Stickers" />
+          <SidebarItem icon={<LayoutDashboard size={18} />} label="Dashboard" to="/" />
+          <SidebarItem icon={<Sticker size={18} />} label="Stickers" to="/stickers" />
           <SidebarItem icon={<Shield size={18} />} label="Admins" />
           <SidebarItem icon={<Users size={18} />} label="Users" />
         </nav>
@@ -42,15 +42,14 @@ export function AdminLayout() {
   );
 }
 
-function SidebarItem({
-  icon,
-  label,
-}: {
-  icon: React.ReactNode;
-  label: string;
-}) {
+function SidebarItem({ icon, label, to }: any) {
+  const navigate = useNavigate();
+
   return (
-    <button className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-muted transition">
+    <button
+      onClick={() => navigate(to)}
+      className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-muted"
+    >
       {icon}
       <span className="text-sm">{label}</span>
     </button>
