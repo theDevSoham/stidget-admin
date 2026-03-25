@@ -4,6 +4,7 @@ import { healthService } from "./health.service";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import dayjs from "@/lib/dayjs";
+import Button from "@/components/ui/button";
 
 export default function DashboardPage() {
   const [health, setHealth] = useState<{
@@ -73,7 +74,11 @@ export default function DashboardPage() {
             value={dayjs(health.timestamp).fromNow()}
           />
 
-          <StatusCard title="API Docs link" value={health.docs} ok />
+          <DocsCard
+            title="API Docs"
+            subtitle="Open API Docs →"
+            url={health.docs}
+          />
         </div>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -112,6 +117,34 @@ function StatusCard({
         >
           {value}
         </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function DocsCard({
+  title,
+  subtitle,
+  url,
+}: {
+  title: string;
+  subtitle: string;
+  url: string;
+}) {
+  return (
+    <Card>
+      <CardHeader className="pb-2">
+        <CardTitle className="text-sm font-medium text-muted-foreground">
+          {title}
+        </CardTitle>
+      </CardHeader>
+
+      <CardContent>
+        <Button asChild size="sm" variant="outline">
+          <a href={url} target="_blank" rel="noopener noreferrer">
+            {subtitle}
+          </a>
+        </Button>
       </CardContent>
     </Card>
   );
