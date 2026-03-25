@@ -1,10 +1,34 @@
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import LoginPage from "@/features/auth/login.page";
+import { Toaster } from "sonner";
 import React from "react";
+import { ProtectedRoute } from "./components/protected-route";
+import DashboardPage from "./features/dashboard/dashboard.page";
+import { AdminLayout } from "./layout/admin-layout";
 
 const App = () => {
   return (
-    <div>
-      <h1 className="text-3xl font-bold underline">Hello world!</h1>
-    </div>
+    <React.Fragment>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+
+          <Route
+            element={
+              <ProtectedRoute>
+                <AdminLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route path="/" element={<DashboardPage />} />
+          </Route>
+
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
+      </BrowserRouter>
+
+      <Toaster position="top-right" />
+    </React.Fragment>
   );
 };
 

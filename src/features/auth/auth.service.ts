@@ -1,0 +1,13 @@
+import { api } from "@/services/api"
+
+export interface LoginPayload {
+  identifier: string
+  password: string
+}
+
+export const authService = {
+  async login(payload: LoginPayload) {
+    const res = await api.post("/auth/login", payload)
+    return res.data
+  },
+}
