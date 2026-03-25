@@ -1,5 +1,5 @@
 import { Outlet, useNavigate } from "react-router-dom";
-import { LogOut, LayoutDashboard, Sticker, Users, Shield } from "lucide-react";
+import { LogOut, LayoutDashboard, Sticker, Users } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -18,10 +18,18 @@ export function AdminLayout() {
         <div className="text-xl font-semibold mb-6">Stidget CMS</div>
 
         <nav className="flex flex-col gap-2 flex-1">
-          <SidebarItem icon={<LayoutDashboard size={18} />} label="Dashboard" to="/" />
-          <SidebarItem icon={<Sticker size={18} />} label="Stickers" to="/stickers" />
-          <SidebarItem icon={<Shield size={18} />} label="Admins" />
-          <SidebarItem icon={<Users size={18} />} label="Users" />
+          <SidebarItem
+            icon={<LayoutDashboard size={18} />}
+            label="Dashboard"
+            to="/"
+          />
+          <SidebarItem
+            icon={<Sticker size={18} />}
+            label="Stickers"
+            to="/stickers"
+          />
+          {/* <SidebarItem icon={<Shield size={18} />} label="Admins" /> */}
+          <SidebarItem icon={<Users />} label="Users" to="/users" />
         </nav>
 
         <Button
