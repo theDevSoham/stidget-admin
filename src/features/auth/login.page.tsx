@@ -22,7 +22,7 @@ export default function LoginPage() {
 
     try {
       const data = await authService.login({
-        identifier: email,
+        email,
         password,
       });
 
