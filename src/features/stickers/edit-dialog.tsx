@@ -3,7 +3,7 @@ import { toast } from "sonner";
 
 import { stickersService } from "./stickers.service";
 
-import { Button } from "@/components/ui/button";
+import Button from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -14,12 +14,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import type { Sticker } from "@/types/sticker";
 
 export function EditDialog({
   sticker,
   onSuccess,
 }: {
-  sticker: any;
+  sticker: Sticker;
   onSuccess: () => void;
 }) {
   const [open, setOpen] = useState(false);
@@ -32,11 +33,12 @@ export function EditDialog({
 
   const [loading, setLoading] = useState(false);
 
+  const initialTags = sticker.tags?.join(", ") ?? "";
   const isDirty =
     file !== null ||
     name !== sticker.name ||
     category !== sticker.category ||
-    tags !== (sticker.tags?.join(", ") || "") ||
+    tags !== initialTags ||
     isPremium !== sticker.isPremium;
 
   useEffect(() => {

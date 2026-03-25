@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { stickersService } from "./stickers.service";
 import { UploadDialog } from "./upload-dialog";
 
-import { Button } from "@/components/ui/button";
+import Button from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -25,9 +25,10 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { EditDialog } from "./edit-dialog";
+import type { Sticker } from "@/types/sticker";
 
 export default function StickersPage() {
-  const [stickers, setStickers] = useState<any[]>([]);
+  const [stickers, setStickers] = useState<Sticker[]>([]);
   const [loading, setLoading] = useState(false);
 
   const fetchStickers = async () => {
@@ -127,7 +128,7 @@ export default function StickersPage() {
 
                 <TableCell className="text-right space-x-2">
                   <EditDialog sticker={sticker} onSuccess={fetchStickers} />
-                  
+
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button variant="destructive" size="sm">

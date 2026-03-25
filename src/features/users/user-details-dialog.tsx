@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { usersService } from "./users.service";
 
-import { Button } from "@/components/ui/button";
+import Button from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -11,13 +11,14 @@ import {
 } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import dayjs from "@/lib/dayjs";
+import type { User } from "@/types/user";
 
 export function UserDetailsDialog({ userId }: { userId: string }) {
   const [open, setOpen] = useState(false);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const fetchUser = async () => {
+  const fetchUser = useCallback(async () => {
     setLoading(true);
     try {
       const res = await usersService.getById(userId);
@@ -25,13 +26,11 @@ export function UserDetailsDialog({ userId }: { userId: string }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId]);
 
   useEffect(() => {
-    if (open) {
-      fetchUser();
-    }
-  }, [open]);
+    if (open) fetchUser();
+  }, [open, fetchUser]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -70,7 +69,13 @@ export function UserDetailsDialog({ userId }: { userId: string }) {
   );
 }
 
-function Detail({ label, value }: any) {
+function Detail({
+  label,
+  value,
+}: {
+  label: string;
+  value: string | number | null;
+}) {
   return (
     <div>
       <span className="text-muted-foreground">{label}:</span>{" "}

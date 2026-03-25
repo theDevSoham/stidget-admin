@@ -3,7 +3,7 @@ import { toast } from "sonner";
 
 import { stickersService } from "./stickers.service";
 
-import { Button } from "@/components/ui/button";
+import Button from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,

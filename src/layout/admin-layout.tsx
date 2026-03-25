@@ -1,7 +1,7 @@
 import { Outlet, useNavigate } from "react-router-dom";
 import { LogOut, LayoutDashboard, Sticker, Users } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import Button from "@/components/ui/button";
 
 export function AdminLayout() {
   const navigate = useNavigate();
@@ -50,7 +50,15 @@ export function AdminLayout() {
   );
 }
 
-function SidebarItem({ icon, label, to }: any) {
+function SidebarItem({
+  icon,
+  label,
+  to,
+}: {
+  icon: React.ReactElement;
+  label: string;
+  to: string;
+}) {
   const navigate = useNavigate();
 
   return (
