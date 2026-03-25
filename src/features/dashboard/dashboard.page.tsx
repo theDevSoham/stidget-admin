@@ -11,6 +11,7 @@ export default function DashboardPage() {
     timestamp: string;
     uptime: number;
     environment: "development" | "production";
+    docs: string;
     services: {
       database: "up" | "down";
       cloudinary: "up" | "down";
@@ -71,6 +72,8 @@ export default function DashboardPage() {
             title="Last Checked"
             value={dayjs(health.timestamp).fromNow()}
           />
+
+          <StatusCard title="API Docs link" value={health.docs} ok />
         </div>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
