@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
-import { stickersService } from "./stickers.service";
+import { mediaService } from "./media.service";
 import { UploadDialog } from "./upload-dialog";
 
 import Button from "@/components/ui/button";
@@ -25,43 +25,44 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { EditDialog } from "./edit-dialog";
-import type { Sticker } from "@/types/sticker";
+import type { MediaItem } from "@/types/media";
+import type { MediaType } from "@/types/media";
 
-export default function StickersPage() {
-  const [stickers, setStickers] = useState<Sticker[]>([]);
+export default function MediaPage({ type }: { type: MediaType }) {
+  const [media, setMedia] = useState<MediaItem[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const fetchStickers = async () => {
+  const fetchMedia = useCallback(async () => {
     setLoading(true);
     try {
-      const data = await stickersService.getAll();
-      setStickers(data);
+      const data = await mediaService.getAll(type);
+      setMedia(data);
     } catch {
-      toast.error("Failed to fetch stickers");
+      toast.error("Failed to fetch " + type);
     } finally {
       setLoading(false);
     }
-  };
+  }, [type]);
 
   const handleDelete = async (id: string) => {
     try {
-      await stickersService.delete(id);
+      await mediaService.delete(type, id);
       toast.success("Deleted");
-      fetchStickers();
+      fetchMedia();
     } catch {
       toast.error("Delete failed");
     }
   };
 
   useEffect(() => {
-    fetchStickers();
-  }, []);
+    fetchMedia();
+  }, [type]);
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-semibold">Stickers</h1>
-        <UploadDialog onSuccess={fetchStickers} />
+        <h1 className="text-2xl font-semibold capitalize">{type}</h1>
+        <UploadDialog type={type} onSuccess={fetchMedia} />
       </div>
 
       {loading ? (
@@ -70,8 +71,8 @@ export default function StickersPage() {
           <Skeleton className="h-12 w-full" />
           <Skeleton className="h-12 w-full" />
         </div>
-      ) : stickers.length === 0 ? (
-        <div className="text-sm text-muted-foreground">No stickers found</div>
+      ) : media.length === 0 ? (
+        <div className="text-sm text-muted-foreground">No {type} found</div>
       ) : (
         <Table>
           <TableHeader>
@@ -86,24 +87,24 @@ export default function StickersPage() {
           </TableHeader>
 
           <TableBody>
-            {stickers.map((sticker) => (
-              <TableRow key={sticker.id}>
+            {media.map((media) => (
+              <TableRow key={media.id}>
                 <TableCell>
                   <img
-                    src={sticker.imageUrl}
+                    src={media.imageUrl}
                     className="w-12 h-12 object-cover rounded-md border"
                   />
                 </TableCell>
 
-                <TableCell className="font-medium">{sticker.name}</TableCell>
+                <TableCell className="font-medium">{media.name}</TableCell>
 
                 <TableCell className="text-muted-foreground">
-                  {sticker.category}
+                  {media.category}
                 </TableCell>
 
                 <TableCell>
                   <div className="flex flex-wrap gap-1">
-                    {sticker.tags?.map((tag: string) => (
+                    {media.tags?.map((tag: string) => (
                       <span
                         key={tag}
                         className="text-xs bg-muted px-2 py-0.5 rounded"
@@ -115,7 +116,7 @@ export default function StickersPage() {
                 </TableCell>
 
                 <TableCell>
-                  {sticker.isPremium ? (
+                  {media.isPremium ? (
                     <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded">
                       Premium
                     </span>
@@ -127,7 +128,11 @@ export default function StickersPage() {
                 </TableCell>
 
                 <TableCell className="text-right space-x-2">
-                  <EditDialog sticker={sticker} onSuccess={fetchStickers} />
+                  <EditDialog
+                    type={type}
+                    media={media}
+                    onSuccess={fetchMedia}
+                  />
 
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
@@ -138,10 +143,10 @@ export default function StickersPage() {
 
                     <AlertDialogContent>
                       <AlertDialogHeader>
-                        <AlertDialogTitle>Delete Sticker?</AlertDialogTitle>
+                        <AlertDialogTitle>Delete {type}?</AlertDialogTitle>
                         <AlertDialogDescription>
                           This action cannot be undone. This will permanently
-                          delete the sticker "{sticker.name}".
+                          delete the {type} "{media.name}".
                         </AlertDialogDescription>
                       </AlertDialogHeader>
 
@@ -149,7 +154,7 @@ export default function StickersPage() {
                         <AlertDialogCancel>Cancel</AlertDialogCancel>
                         <AlertDialogAction
                           variant="destructive"
-                          onClick={() => handleDelete(sticker.id)}
+                          onClick={() => handleDelete(media.id)}
                         >
                           Delete
                         </AlertDialogAction>

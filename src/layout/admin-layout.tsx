@@ -1,5 +1,5 @@
 import { Outlet, useNavigate } from "react-router-dom";
-import { LogOut, LayoutDashboard, Sticker, Users } from "lucide-react";
+import { LogOut, LayoutDashboard, Sticker, Users, Smile } from "lucide-react";
 
 import Button from "@/components/ui/button";
 
@@ -27,6 +27,12 @@ export function AdminLayout() {
             icon={<Sticker size={18} />}
             label="Stickers"
             to="/stickers"
+          />
+
+          <SidebarItem
+            icon={<Smile size={18} />}
+            label="Emojis"
+            to="/emojis"
           />
           {/* <SidebarItem icon={<Shield size={18} />} label="Admins" /> */}
           <SidebarItem icon={<Users />} label="Users" to="/users" />

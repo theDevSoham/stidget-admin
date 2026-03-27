@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 
-import { stickersService } from "./stickers.service";
+import { mediaService } from "./media.service";
 
 import Button from "@/components/ui/button";
 import {
@@ -14,57 +14,36 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import type { Sticker } from "@/types/sticker";
+import type { MediaType } from "@/types/media";
 
-export function EditDialog({
-  sticker,
+export function UploadDialog({
+  type,
   onSuccess,
 }: {
-  sticker: Sticker;
+  type: MediaType;
   onSuccess: () => void;
 }) {
-  const [open, setOpen] = useState(false);
-
   const [file, setFile] = useState<File | null>(null);
   const [name, setName] = useState("");
   const [category, setCategory] = useState("");
   const [tags, setTags] = useState("");
   const [isPremium, setIsPremium] = useState(false);
-
   const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
 
-  const initialTags = sticker.tags?.join(", ") ?? "";
-  const isDirty =
-    file !== null ||
-    name !== sticker.name ||
-    category !== sticker.category ||
-    tags !== initialTags ||
-    isPremium !== sticker.isPremium;
+  const handleUpload = async () => {
+    if (!file) return;
 
-  useEffect(() => {
-    if (sticker) {
-      setName(sticker.name);
-      setCategory(sticker.category);
-      setTags(sticker.tags?.join(", "));
-      setIsPremium(sticker.isPremium);
-      setFile(null);
-    }
-  }, [sticker, open]);
-
-  const handleUpdate = async () => {
     setLoading(true);
 
     try {
       const formData = new FormData();
 
-      // optional image
-      if (file) {
-        formData.append("image", file);
-      }
-
+      formData.append("image", file);
       formData.append("name", name);
       formData.append("category", category);
 
+      // convert comma separated → JSON array
       formData.append(
         "tags",
         JSON.stringify(tags.split(",").map((t) => t.trim())),
@@ -72,80 +51,89 @@ export function EditDialog({
 
       formData.append("isPremium", String(isPremium));
 
-      await stickersService.update(sticker.id, formData);
+      await mediaService.upload(type, formData);
 
-      toast.success("Sticker updated");
+      toast.success(type + " uploaded");
       onSuccess();
       setOpen(false);
+      reset();
     } catch {
-      toast.error("Update failed");
+      toast.error("Upload failed");
     } finally {
       setLoading(false);
     }
   };
 
+  const reset = () => {
+    setFile(null);
+    setName("");
+    setCategory("");
+    setTags("");
+    setIsPremium(false);
+  };
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="sm" variant="secondary">
-          Edit
-        </Button>
+        <Button>Upload {type}</Button>
       </DialogTrigger>
 
       <DialogContent className="space-y-4">
         <DialogHeader>
-          <DialogTitle>Edit Sticker</DialogTitle>
+          <DialogTitle>Upload {type}</DialogTitle>
         </DialogHeader>
 
-        {/* Image */}
         <div className="space-y-2">
-          <Label>Image</Label>
-
-          {(file || sticker.imageUrl) && (
+          {file && (
             <img
-              src={file ? URL.createObjectURL(file) : sticker.imageUrl}
+              src={URL.createObjectURL(file)}
               className="w-16 h-16 rounded border"
             />
           )}
-
+          <Label>Image</Label>
           <Input
             type="file"
             onChange={(e) => setFile(e.target.files?.[0] || null)}
           />
         </div>
 
-        {/* Name */}
         <div className="space-y-2">
           <Label>Name</Label>
-          <Input value={name} onChange={(e) => setName(e.target.value)} />
+          <Input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Funny icon"
+          />
         </div>
 
-        {/* Category */}
         <div className="space-y-2">
           <Label>Category</Label>
           <Input
             value={category}
             onChange={(e) => setCategory(e.target.value)}
+            placeholder="funny"
           />
         </div>
 
-        {/* Tags */}
         <div className="space-y-2">
           <Label>Tags (comma separated)</Label>
-          <Input value={tags} onChange={(e) => setTags(e.target.value)} />
+          <Input
+            value={tags}
+            onChange={(e) => setTags(e.target.value)}
+            placeholder="cat, funny"
+          />
         </div>
 
-        {/* Premium */}
         <div className="flex items-center gap-2">
           <Checkbox
             checked={isPremium}
             onCheckedChange={(v) => setIsPremium(!!v)}
           />
-          <Label>Premium Sticker</Label>
+          <Label>Premium {type}</Label>
         </div>
 
-        <Button onClick={handleUpdate} disabled={loading || !isDirty}>
-          {loading ? "Updating..." : "Update"}
+        <Button onClick={handleUpload} disabled={loading}>
+          {loading ? "Uploading..." : "Upload"}
         </Button>
       </DialogContent>
     </Dialog>

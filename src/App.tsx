@@ -5,8 +5,8 @@ import React from "react";
 import { ProtectedRoute } from "./components/protected-route";
 import DashboardPage from "./features/dashboard/dashboard.page";
 import { AdminLayout } from "./layout/admin-layout";
-import StickersPage from "./features/stickers/stickers.page";
 import UsersPage from "./features/users/users.page";
+import MediaPage from "./features/media/media.page";
 
 const App = () => {
   return (
@@ -23,7 +23,8 @@ const App = () => {
             }
           >
             <Route path="/" element={<DashboardPage />} />
-            <Route path="/stickers" element={<StickersPage />} />
+            <Route path="/stickers" element={<MediaPage type="stickers" />} />
+            <Route path="/emojis" element={<MediaPage type="emojis" />} />
             <Route path="/users" element={<UsersPage />} />
           </Route>
 
