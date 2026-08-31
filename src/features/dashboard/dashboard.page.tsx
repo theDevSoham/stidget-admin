@@ -6,6 +6,21 @@ import { Skeleton } from "@/components/ui/skeleton";
 import dayjs from "@/lib/dayjs";
 import Button from "@/components/ui/button";
 
+// Swagger lives at <host>/docs (not under /api). Derive it from the configured
+// API base so the link always tracks VITE_API_URL, falling back to whatever the
+// /health response reports if the base URL is unset.
+function apiDocsUrl(fallback: string): string {
+  const base = import.meta.env.VITE_API_URL as string | undefined;
+  if (base) {
+    try {
+      return new URL("/docs", base).toString();
+    } catch {
+      // fall through to the health-provided value
+    }
+  }
+  return fallback;
+}
+
 export default function DashboardPage() {
   const [health, setHealth] = useState<{
     status: "ok" | "degraded";
@@ -77,7 +92,7 @@ export default function DashboardPage() {
           <DocsCard
             title="API Docs"
             subtitle="Open API Docs →"
-            url={health.docs}
+            url={apiDocsUrl(health.docs)}
           />
         </div>
       ) : (

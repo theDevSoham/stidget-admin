@@ -7,6 +7,7 @@ import DashboardPage from "./features/dashboard/dashboard.page";
 import { AdminLayout } from "./layout/admin-layout";
 import UsersPage from "./features/users/users.page";
 import MediaPage from "./features/media/media.page";
+import HubPage from "./features/hub/hub.page";
 
 const App = () => {
   return (
@@ -25,6 +26,7 @@ const App = () => {
             <Route path="/" element={<DashboardPage />} />
             <Route path="/stickers" element={<MediaPage type="stickers" />} />
             <Route path="/emojis" element={<MediaPage type="emojis" />} />
+            <Route path="/hub" element={<HubPage />} />
             <Route path="/users" element={<UsersPage />} />
           </Route>
 
