@@ -3,6 +3,7 @@ import { toast } from "sonner"
 
 import { hubService } from "./hub.service"
 import { UploadDialog } from "./upload-dialog"
+import { BulkUploadDialog } from "./bulk-upload-dialog"
 import { EditDialog } from "./edit-dialog"
 
 import Button from "@/components/ui/button"
@@ -64,7 +65,10 @@ export default function HubPage() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-semibold">Hub</h1>
-        <UploadDialog onSuccess={fetchItems} />
+        <div className="flex gap-2">
+          <BulkUploadDialog onSuccess={fetchItems} />
+          <UploadDialog onSuccess={fetchItems} />
+        </div>
       </div>
 
       {loading ? (

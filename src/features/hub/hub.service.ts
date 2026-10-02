@@ -35,6 +35,13 @@ export const hubService = {
     return res.data.data
   },
 
+  // All-or-nothing: one sheet + 1–50 images, rows matched to images by file
+  // name. Not idempotent — never retry automatically. Responds with no items.
+  async bulkCreate(formData: FormData) {
+    const res = await api.post("/hub/bulk", formData, { timeout: 120_000 })
+    return res.data
+  },
+
   async delete(id: string) {
     const res = await api.delete(`/hub/${id}`)
     return res.data

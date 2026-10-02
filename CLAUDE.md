@@ -61,7 +61,7 @@ JWT-in-localStorage under the key `admin_token`. Login (`POST /admin/login`) sto
 - `POST /admin/login` → `{ token }`
 - `GET /health` → status object (`status`, `environment`, `uptime`, `timestamp`, `docs`, `services.{database,cloudinary}`)
 - `GET|POST /{stickers|emojis}`, `PATCH|DELETE /{stickers|emojis}/:id`
-- `GET /hub` (`{ data, meta }`, active items only), `GET /hub/:id`, `POST /hub`, `PATCH /hub/:id`, `DELETE /hub/:id` (soft delete) — all require an `ADMIN` JWT
+- `GET /hub` (`{ data, meta }`, active items only), `GET /hub/:id`, `POST /hub`, `POST /hub/bulk`, `PATCH /hub/:id`, `DELETE /hub/:id` (soft delete) — all require an `ADMIN` JWT
 - `GET /admin/users`, `GET /admin/users/:id`
 
 Media create/update send **multipart `FormData`**: image file under field `image`, plus `name`, `category`, `tags` (a JSON-stringified array built from comma-separated input), and `isPremium` (stringified boolean). Images are stored on **Cloudinary** by the backend.
@@ -74,6 +74,7 @@ Admin CRUD for curated "Hub drops" — richer than media (author attribution, ba
 - `hub-form-fields.tsx` — the shared presentational form (both create and edit render it). `colorMode` is a native `<select>` styled to match `Input` (no shadcn Select in the project).
 - `upload-dialog.tsx` — create (`POST`); requires image + `name` + `authorHandle`; sends only populated optional fields.
 - `edit-dialog.tsx` — update (`PATCH`); fetches `GET /hub/:id` on open to pre-fill, then **diffs against the fetched snapshot and sends only changed fields** (empty string clears nullable fields). Key rule baked in: **replacing the image rebuilds `imageMeta`, so device fields are re-sent to preserve them; with no new image, changed device fields are merged.** Empty diff → toast, no request (backend `400`s on "nothing to update").
+- `bulk-upload-dialog.tsx` — bulk create (`POST /hub/bulk`, 2-min timeout). Multipart with one `sheet` (.xlsx/.xls/.csv, ≤5 MB) and 1–50 `images` (same key repeated; each row's `image` column must match exactly one uploaded file name). All-or-nothing and **not idempotent** — the dialog can't be closed or resubmitted mid-request and never retries. Validation failures return `errors: { row?, message }[]` (row = spreadsheet row, 1 = headers), shown grouped by row in the dialog. Response has no items, so the grid refetches.
 - No admin list endpoint exists; the grid uses the shared `GET /hub`, so **soft-deleted drops are not listable and there's no restore.**
 
 List responses are unwrapped inconsistently across services — media uses `res.data.data`, users uses `res.data` (with `res.data.data` for rows and `res.data.meta` for pagination). Check the specific service before assuming a shape.
